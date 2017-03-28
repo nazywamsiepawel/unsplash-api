@@ -29,6 +29,7 @@ module.exports = {
   getCuratedBatchPhotos: getCuratedBatchPhotos,
   getTotalStats: getTotalStats,
   getCurrentUser: getCurrentUser,
+  getRandomPhoto: getRandomPhoto,
   updateCurrentUser: updateCurrentUser,
   uploadPhoto: uploadPhoto
 };
@@ -101,6 +102,53 @@ function getUserByName(userName, callback) {
 
     return callback(null, JSON.parse(body));
   });
+}
+
+
+
+/**
+ * Callback that returns the request photo information
+ *
+ * @callback getPhotoCallback
+ * @param {object} Error response error object
+ * @param {object} photo requested photo information
+ */
+
+/**
+ * gets a single random photo
+ * @param  {int}      height   custom height to apply
+ * @param  {int}      width   custom height to apply
+ * @param  {string}   query Limit selection to photos matching a search term.
+ * @param  {getPhotoCallback} callback called upon completion of API call
+ */
+function getRandomPhoto(width, height, query, callback) {
+   var params = {};
+
+   if (width != null)
+      params.w = width;
+
+  if (height != null)
+      params.h = height;
+
+  if (query != null)
+     params.query = query;
+
+   request({
+      url: (HOST + path.join('photos/random')),
+      method: 'GET',
+      qs: params,
+      headers: {
+         'Content-type': 'application/json',
+         'Authorization': 'Client-ID ' + this.client_id
+      }
+   },
+   function(err, res, body){
+      if (err) return callback(err);
+
+      if (res.statusCode !== 200) return callback(new Error(body), null);
+
+      return callback(null, JSON.parse(body));
+   });
 }
 
 /**
